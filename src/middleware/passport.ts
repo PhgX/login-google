@@ -2,6 +2,7 @@ import passport from "passport"
 import { UserModel } from '../schemas/user.model'
 import LocalStrategy from 'passport-local';
 import GoogleStrategy from 'passport-google-oauth20';
+import { Request } from "express";
 
 passport.serializeUser((user, done) => {
   done(null, user)
@@ -11,7 +12,7 @@ passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.use('local', new LocalStrategy(async (username, password, done) => {
+passport.use('local', new LocalStrategy(async (username : string, password : string, done) => {
   const user = await UserModel.findOne({ username: username });
   if (!user) {
     return done(null, false);
@@ -25,12 +26,12 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
 }));
 
 passport.use(new GoogleStrategy({
-  clientID: "569206490177-76lgo2s8ialvfgopgtt0dm9lefa6bat3.apps.googleusercontent.com",
-  clientSecret: "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",
+  clientID: "569206490177-76lgo2s8ialvfgopgtt0dm9lefa6bat3.apps.googleusercontent.com", //Google ID server
+  clientSecret: "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", //Google secret key
   callbackURL: "http://localhost:3000/auth/google/callback",
   passReqToCallback: true
 },
-  async (request, accessToken, refreshToken, profile, done) => {
+  async (request : Request, accessToken , refreshToken, profile, done) => {
     try {
       console.log(profile, 'profile')
       let existingUser = await UserModel.findOne({ 'google.id': profile.id });

@@ -6,7 +6,6 @@ import multer from 'multer';
 const upload = multer();
 
 router.get("/login", (req, res) => {
-  // this will render login.ejs file
   res.render("login");
 });
 
